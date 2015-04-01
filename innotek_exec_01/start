@@ -1,0 +1,9 @@
+#!/bin/bash
+
+
+/bin/sh kill_processes
+
+sleep 1
+
+echo "start Rice_Seedling_Monitor"
+./c_processes/Rice_Seedling_Monitor/Rice_Seedling_Monitor

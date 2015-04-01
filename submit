@@ -1,0 +1,6 @@
+#!/bin/bash
+
+git add . -A
+git commit -m "innotek Changsha"
+git remote add origin git@github.com:Litte-kang/rice_seedling_midware_pro.git
+git push -u origin master

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+param=$1
+
+if [ "make" == "$param" ]
+then
+	cd ./rice_seedling_monitor/makefile
+	make
+	echo 'cp ../out/Rice_Seedling_Monitor ../../innotek_exec_01/c_processes/Rice_Seedling_Monitor'
+	cp ../out/Rice_Seedling_Monitor ../../innotek_exec_01/c_processes/Rice_Seedling_Monitor/	
+fi
+
+if [ "clean" == "$param" ]
+then
+	cd ./rice_seedling_monitor/makefile
+	make clean
+	rm ../../innotek_exec_01/c_processes/Rice_Seedling_Monitor/Rice_Seedling_Monitor
+fi

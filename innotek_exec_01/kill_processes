@@ -1,0 +1,11 @@
+#!/bin/sh
+
+#pid=`ps aux | grep node | grep -v grep | awk '{print $1}'`
+
+#echo "kill node"
+#kill -9 $pid
+
+pid=`ps aux | grep Rice_Seedling_Monitor | grep -v grep | awk '{print $1}'`
+
+echo "kill Rice_Seedling_Monitor"
+kill -9 $pid
