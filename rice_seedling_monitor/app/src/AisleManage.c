@@ -271,7 +271,7 @@ static void GReqResponsePro(int aisle, int pos, unsigned char *pData)
 	
 	address = ((int)(pData[1] << 8) | pData[2]);
 	
-	L_DEBUG("get %d type data response from %.5d by %d aisle", data_type, address, aisle);
+	L_DEBUG("get %d type data response from %.5d by %d aisle\n", data_type, address, aisle);
 	
 	g_AisleInfo[pos].m_Flag |= REC_DATA_FLAG;
 	
@@ -338,19 +338,16 @@ static int UploadDataToServer(const char *pFileName, int address, int type, int 
 		case 0:
 			{
 				int rice_seedling_sum = 0;
-				int earth_size = 0;
+				double earth_size = 0;
 				
-				rice_seedling_sum = (int)pData[0];
-				rice_seedling_sum <<= 8;
-				rice_seedling_sum |= (int)pData[1];
+				rice_seedling_sum = CONV_TO_INT(pData[0], pData[1], pData[2], pData[3]);
 				
-				earth_size = (int)pData[2];
-				earth_size <<= 8;
-				earth_size |= (int)pData[3];
-				
+				earth_size = (double)pData[4] + ((double)pData[5] / 100);	
+				                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 				tmp = strlen(upload_buff);
 				
-				sprintf(&upload_buff[tmp], "[%d,%d]}",rice_seedling_sum, earth_size);		
+				sprintf(&upload_buff[tmp], "[%d,%.2f]}",rice_seedling_sum, earth_size);		
+				
 			}
 			break;
 		default:

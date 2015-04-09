@@ -13,7 +13,7 @@
 
 //----------------------Define macro for-------------------//
 
-#define THREAD_SUM	3
+#define THREAD_SUM	1
 
 //---------------------------end---------------------------//
 
@@ -26,8 +26,6 @@ Default value		: /
 The scope of value	: /
 First used			: 
 */
-
-
 
 //---------------------------end--------------------------//
 
@@ -67,7 +65,7 @@ static void AppInit()
 #endif	
 	int i = 0;
 	int res = 0;
-	int thrd_flag[THREAD_SUM] = {0, 1, 2};
+	int thrd_flag[THREAD_SUM] = {0};
 	FILE *fp = NULL;
 	
 	for (i = 0; i < USER_COM_SIZE; ++i)
@@ -77,10 +75,12 @@ static void AppInit()
 		if (0 >= res)
 		{
 			printf("%s:open port failed!\n",__FUNCTION__);
-			exit(0);
+			return;
 		}
 	
 		g_UartFDS[i] = res;
+		
+		L_DEBUG("uart fd = %d\n",g_UartFDS[i]);
 	
 		set_com_config(res, 9600, 8, 'N', 1);
 	}
@@ -108,7 +108,7 @@ static void AppInit()
 		fclose(fp);
 		
 		memcpy(g_CParam.m_IPAddr, ip_addr, strlen(ip_addr));
-		g_CParam.m_Port = 8124;
+		g_CParam.m_Port = 8000;
 
 		printf("server ip %s\n", g_CParam.m_IPAddr);			
 	}
@@ -136,7 +136,7 @@ static void AppInit()
 		if (0 != res)
 		{
 			printf("%s:create %d thread faild\n", __FUNCTION__, thrd_flag[i]);
-			exit(0);
+			return;
 		}
 		
 	}
@@ -148,8 +148,10 @@ static void AppInit()
 		if (0 != res)
 		{
 			printf("%s:destroy %d thread faild\n", __FUNCTION__, thrd_flag[i]);
-			exit(0);
+			return;
 		}
+		
+		L_DEBUG("%d = destroy ok!\n", i);
 	}
 	
 }
@@ -157,6 +159,8 @@ static void AppInit()
 static void* Thrds(void *pArg)
 {
 	int flag = (int)pArg;
+	
+	L_DEBUG("thread num = %d\n", flag);
 	
 	switch (flag)
 	{
@@ -190,6 +194,8 @@ static void RecUartData(int aisle)
 		return;
 	}
 	
+	L_DEBUG("recieve %d uart data thread!\n", aisle);
+	
 	while (1)
 	{
 		tmp_set = in_set;
@@ -198,13 +204,13 @@ static void RecUartData(int aisle)
 		
 		if (0 < res)
 		{
-			if (!FD_ISSET(aisle, &tmp_set))
+			if (FD_ISSET(aisle, &tmp_set))
 			{
 				{
 					printf("----------------------------------data from %d aisle\n",aisle);
 					memset(buff, 0, BUFFER_SIZE);
 					real_read = read(aisle, buff, BUFFER_SIZE);
-					///*
+
 					{
 					    int j = 0;
 					    
@@ -214,7 +220,7 @@ static void RecUartData(int aisle)
 					    }
 					    L_DEBUG("\n");
 					}
-				    //*/    
+   
                     if (0 < real_read)
                     {
                        ProcAisleData(aisle, buff, real_read);

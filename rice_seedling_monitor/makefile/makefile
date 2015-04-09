@@ -10,7 +10,7 @@ OBJS = main.o \
 	   uart_api.o
 CROSS_CC = arm-linux-gcc
 PC_CC = gcc
-CC = ${PC_CC}
+CC = ${CROSS_CC}
 
 APP_NAME = Rice_Seedling_Monitor
 

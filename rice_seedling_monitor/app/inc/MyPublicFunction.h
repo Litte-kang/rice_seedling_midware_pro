@@ -13,6 +13,8 @@
 #define GET_SYS_CURRENT_TIME(n)	gettimeofday(&n, NULL)
 #define IS_TIMEOUT(n,m)			IsTimeout((int)&n, m)
 
+#define CONV_TO_INT(a,b,c,d) ((a << 24) | (b << 16) | (c << 8) | d)
+
 #if 1
 #define L_DEBUG	printf
 #else
@@ -49,7 +51,7 @@ extern unsigned char g_MyLocalID[11];
 extern int 				IsTimeout(int StartTime, unsigned int threshold);
 extern void 			Delay_ms(unsigned int xms);
 extern unsigned char* 	MyStrStr(unsigned char *pSrc, unsigned int SrcLen, const unsigned char *pDst, unsigned int DstLen, unsigned int *len);
-extern int 				CreateCRC16CheckCode_1(unsigned char *pData, unsigned int len);
+extern int				CreateCRC16CheckCode_1(unsigned char *pData, unsigned int len);
 extern int 				BackupAsciiData(const char *pFileName, unsigned char *pData);
 
 //-----------------------------------------------DECLARATION FUNCTION END--------------------------------------------//

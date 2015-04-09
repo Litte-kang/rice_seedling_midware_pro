@@ -145,7 +145,7 @@ void GetSlaveBaseInfo(int arg)
 	SetCurSlavePositionOnTab(param.m_Aisle, 0);
 	SetAisleFlag(param.m_Aisle, NULL_DATA_FLAG);
 
-	L_DEBUG("%s:send %d type request ok on %d aisle\n", __FUNCTION__, param.m_DataType, param.m_Aisle);	
+	L_DEBUG("%s:send %d type request end on %d aisle\n", __FUNCTION__, param.m_DataType, param.m_Aisle);	
 	
 	g_EvtOkFlag = (g_EvtOkFlag & !(0x01)); 	
 	

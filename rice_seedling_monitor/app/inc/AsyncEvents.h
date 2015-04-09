@@ -12,7 +12,7 @@
 
 typedef void (*EvtAction)(int); 
 
-typedef union _EventParams
+typedef struct _EventParams
 {
 	int				m_Aisle;
 	int 			m_DataType;

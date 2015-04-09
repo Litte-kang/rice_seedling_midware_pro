@@ -48,7 +48,7 @@ int SendGReq(int aisle, unsigned short address, unsigned char type, unsigned cha
 	req[5] = 'E';
 	
 	//--- send ---//
-	if (5 != SEND(aisle, req, 5))
+	if (6 != SEND(aisle, req, 6))
 	{
 		return -1;
 	}
@@ -180,7 +180,7 @@ int IsGpr(unsigned char *pGpr)
 		case 'P':
 		case 'R':
 			{
-				if ('G' == pGpr[4] || 'P' == pGpr[4])
+				if ('G' == pGpr[4] || 'P' == pGpr[4] || 'E' == pGpr[4])
 				{
 					data_len = (int)pGpr[5];
 					data_len <<= 8;
@@ -191,8 +191,8 @@ int IsGpr(unsigned char *pGpr)
 						crc_code = (int)pGpr[7 + data_len];
 						crc_code <<= 8;
 						crc_code |= (int)pGpr[8 + data_len];
-
-						if (crc_code == CreateCRC16CheckCode_1(&pGpr[7], (unsigned int)data_len))
+						
+						if (crc_code == (0x0000ffff & CreateCRC16CheckCode_1(&pGpr[7], (unsigned int)data_len)))
 						{
 							return (int)pGpr[0];
 						}
