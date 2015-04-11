@@ -14,6 +14,7 @@
 //----------------------Define macro for-------------------//
 
 #define THREAD_SUM	1
+#define ALARM_TIME	5
 
 //---------------------------end---------------------------//
 
@@ -126,7 +127,7 @@ static void AppInit()
 		sigaction(SIGALRM, &sa, 0);
 		sigaction(SIGALRM, &sig, 0);
 
-		alarm(60);		
+		alarm(30);		
 	}
 	
 	for (i = 0; i < THREAD_SUM; ++i)
@@ -254,7 +255,7 @@ static void TimerCallback(int SigNum)
 		}
 	}
 	
-	alarm(60);
+	alarm(ALARM_TIME);
 }
 
 

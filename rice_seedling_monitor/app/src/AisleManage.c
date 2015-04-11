@@ -15,7 +15,7 @@ static void 	SendFwToSlave(int aisle, int pos, unsigned char *pData);
 static void 	GReqResponsePro(int aisle, int pos, unsigned char *pData);
 static void     PReqResponsePro(int aisle, int pos, unsigned char *pData);
 static int		GetFw(AisleInfo *pInfo, unsigned char type);		
-static int 		UploadDataToServer(const char *pFileName, int address, int type, int len, unsigned char *pData);
+static int 		UploadDataToServer(const char *pFileName, int address, int type, int len, unsigned char *pData, int pos);
 static int 		GetAislePositionOnTab(int aisle);
 
 //------------------------------------DECLARATION FUNCIONT END-------------------------------//
@@ -277,7 +277,7 @@ static void GReqResponsePro(int aisle, int pos, unsigned char *pData)
 	
 	if (0 <= data_len)
 	{	
-		UploadDataToServer(SLAVES_DATA_BACKUP, address, data_type, data_len, &pData[7]);
+		UploadDataToServer(SLAVES_DATA_BACKUP, address, data_type, data_len, &pData[7], pos);
 	}
 	
 	g_AisleInfo[pos].m_Flag |= PRO_DATA_OK_FLAG;
@@ -323,9 +323,10 @@ static void PReqResponsePro(int aisle, int pos, unsigned char *pData)
 				: type - in.
 				: len - in.
 				: pData - data.
+				: pos - in.
 **Return		: 0 - ok, ohter - failed.
 ***********************************************************************/
-static int UploadDataToServer(const char *pFileName, int address, int type, int len, unsigned char *pData)
+static int UploadDataToServer(const char *pFileName, int address, int type, int len, unsigned char *pData, int pos)
 {
 	int i = 0;
 	int tmp = 0;
@@ -334,19 +335,21 @@ static int UploadDataToServer(const char *pFileName, int address, int type, int 
 	sprintf(upload_buff, "{\"type\":%d,\"midAddress\":\"%s\",\"address\":\"%.5d\",\"data\":",type, g_MyLocalID, address);
 	
 	switch (type)
-	{
+	{                
 		case 0:
 			{
-				int rice_seedling_sum = 0;
-				double earth_size = 0;
+				int total_rotates = 0;
+				int work_speed = 0;
 				
-				rice_seedling_sum = CONV_TO_INT(pData[0], pData[1], pData[2], pData[3]);
+				total_rotates = CONV_TO_INT(pData[0], pData[1], pData[2], pData[3]);
 				
-				earth_size = (double)pData[4] + ((double)pData[5] / 100);	
+				work_speed = (int)pData[4];
+				work_speed <<= 8;
+				work_speed |= (int)pData[5];	
 				                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 				tmp = strlen(upload_buff);
 				
-				sprintf(&upload_buff[tmp], "[%d,%.2f]}",rice_seedling_sum, earth_size);		
+				sprintf(&upload_buff[tmp], "[%d,%d]}",total_rotates, work_speed);		
 				
 			}
 			break;

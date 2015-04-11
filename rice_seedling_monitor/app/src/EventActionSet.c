@@ -90,7 +90,7 @@ void GetSlaveBaseInfo(int arg)
 	int counter = 0;
 	int address = 0;
 	int res = 0;
-	int send_req_counter = 4;
+	int send_req_counter = 3;
 	TIME start;
 	
 	UploadBackData();
@@ -135,7 +135,7 @@ void GetSlaveBaseInfo(int arg)
 		} //--- end of while (send_req_counter) ---//
 	
 		counter++;
-		send_req_counter = 4;
+		send_req_counter = 3;
 	
 		SetCurSlavePositionOnTab(param.m_Aisle, counter);
 		SetAisleFlag(param.m_Aisle, NULL_DATA_FLAG);
