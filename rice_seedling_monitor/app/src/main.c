@@ -13,7 +13,7 @@
 
 //----------------------Define macro for-------------------//
 
-#define THREAD_SUM	1
+#define THREAD_SUM	2
 #define ALARM_TIME	5
 
 //---------------------------end---------------------------//
@@ -35,6 +35,7 @@ First used			:
 
 static void		AppInit();
 static void*	Thrds(void *pArg);
+static void		IdleTask();
 static void		RecUartData(int aisle);
 static void		SendUartData(int aisle);
 static void 	TimerCallback(int SigNum);
@@ -66,7 +67,7 @@ static void AppInit()
 #endif	
 	int i = 0;
 	int res = 0;
-	int thrd_flag[THREAD_SUM] = {0};
+	int thrd_flag[THREAD_SUM] = {0,100};
 	FILE *fp = NULL;
 	
 	for (i = 0; i < USER_COM_SIZE; ++i)
@@ -168,6 +169,9 @@ static void* Thrds(void *pArg)
 		case 0:
 			RecUartData(g_UartFDS[0]);
 			break;
+		case 100:
+			IdleTask();
+			break;
 		default:
 			break;
 	}
@@ -258,4 +262,23 @@ static void TimerCallback(int SigNum)
 	alarm(ALARM_TIME);
 }
 
+static void	IdleTask()
+{
+	unsigned char str[200] = "{\"type\":0,\"midAddress\":\"0000000000\",\"address\":\"00004\",\"data\":[25,5]}";
+	int tmp = 0;
+	
+	tmp = strlen(str);
+	
+	while (1)
+	{
+#if 0
+		ConnectServer(1, g_CParam);
+		
+		SendDataToServer(str, tmp);
+		
+		LogoutClient();
+#endif		
+		sleep(5);
+	}
+}
 

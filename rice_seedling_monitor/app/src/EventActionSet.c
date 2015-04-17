@@ -54,7 +54,7 @@ static void UploadBackData(void)
 	
 	L_DEBUG("start a connection!\n");
 				
-	if(!ConnectServer(3, g_CParam))
+	if(!ConnectServer(1, g_CParam))
 	{
 		fp = fopen(SLAVES_DATA_BACKUP, "r");
 		if (NULL != fp)
@@ -90,12 +90,28 @@ void GetSlaveBaseInfo(int arg)
 	int counter = 0;
 	int address = 0;
 	int res = 0;
-	int send_req_counter = 3;
+	int send_req_counter = 1;
 	TIME start;
+	unsigned char res_dat[16] = {0};
 	
 	UploadBackData();
 	
 	slave_sum = GetSlaveSumOnAisle(param.m_Aisle);
+
+	res_dat[0] = 'R';
+	res_dat[3] = param.m_DataType;
+	res_dat[4] = 'G';
+	res_dat[5] = 0;
+	res_dat[6] = 6;
+	res_dat[7] = 0;
+	res_dat[8] = 0;
+	res_dat[9] = 0;
+	res_dat[10] = 0;
+	res_dat[11] = 0;
+	res_dat[12] = 0;
+	res_dat[13] = 0;
+	res_dat[14] = 0;
+	res_dat[15] = 'E';
 
 	while (counter < slave_sum)
 	{						
@@ -111,14 +127,19 @@ void GetSlaveBaseInfo(int arg)
 		{
 			if (NULL_DATA_FLAG == GetAisleFlag(param.m_Aisle))
 			{
-				res = IS_TIMEOUT(start, (3*1000));
+				res = IS_TIMEOUT(start, (2*1000));
 				if (res)
 				{
 					printf("%s:receive %.5d get req(%d) response timeout!\n", __FUNCTION__, address, param.m_DataType);
+					
+					res_dat[1] = (unsigned char)(address >> 8);
+					res_dat[2] = (unsigned char)address;
+					
+					ProcAisleData(param.m_Aisle, res_dat, 16);
 					//sprintf(g_TmpLog, "receive %.5d get req(%d) response timeout!</br>",((int)(address[0] << 8) | address[1]), param.m_DataType);
 					//SaveTmpData(g_TmpLog);
 			
-					SendGReq(param.m_Aisle, (unsigned short)address, param.m_DataType, param.m_Param);
+					//SendGReq(param.m_Aisle, (unsigned short)address, param.m_DataType, param.m_Param);
 					GET_SYS_CURRENT_TIME(start);
 					send_req_counter--;									
 				}
@@ -135,7 +156,7 @@ void GetSlaveBaseInfo(int arg)
 		} //--- end of while (send_req_counter) ---//
 	
 		counter++;
-		send_req_counter = 3;
+		send_req_counter = 1;
 	
 		SetCurSlavePositionOnTab(param.m_Aisle, counter);
 		SetAisleFlag(param.m_Aisle, NULL_DATA_FLAG);

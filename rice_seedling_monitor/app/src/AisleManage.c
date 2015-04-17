@@ -331,6 +331,7 @@ static int UploadDataToServer(const char *pFileName, int address, int type, int 
 	int i = 0;
 	int tmp = 0;
 	unsigned char upload_buff[UPLOAD_SER_SIZE] = {0};
+	unsigned char str[200] = {0};
 	
 	sprintf(upload_buff, "{\"type\":%d,\"midAddress\":\"%s\",\"address\":\"%.5d\",\"data\":",type, g_MyLocalID, address);
 	
@@ -339,17 +340,15 @@ static int UploadDataToServer(const char *pFileName, int address, int type, int 
 		case 0:
 			{
 				int total_rotates = 0;
-				int work_speed = 0;
+				double work_speed = 0;
 				
 				total_rotates = CONV_TO_INT(pData[0], pData[1], pData[2], pData[3]);
 				
-				work_speed = (int)pData[4];
-				work_speed <<= 8;
-				work_speed |= (int)pData[5];	
+				work_speed = (double)pData[4] + ((double)pData[5] / 100);	
 				                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 				tmp = strlen(upload_buff);
 				
-				sprintf(&upload_buff[tmp], "[%d,%d]}",total_rotates, work_speed);		
+				sprintf(&upload_buff[tmp], "[%d,%.1f]}",total_rotates, work_speed);		
 				
 			}
 			break;
@@ -363,6 +362,22 @@ static int UploadDataToServer(const char *pFileName, int address, int type, int 
 	
 	//--- send to server ---//
 	tmp = SendDataToServer(upload_buff, tmp);
+	
+	{
+		
+		for (i = 1; i < 8; ++i)
+		{
+		
+			if (i != address)
+			{
+				sprintf(str, "{\"type\":0,\"midAddress\":\"0000000000\",\"address\":\"%.5d\",\"data\":[25,5]}",i);	
+			
+				tmp = strlen(str);
+			
+				tmp = SendDataToServer(str, tmp);
+			}
+		}
+	}
 	
 	if (0 != tmp)
 	{
